@@ -46,7 +46,6 @@ class JetnewsUiTest {
         composeTestRule.onNodeWithText("Jetnews").assertIsDisplayed()
     }
 
-    @Ignore("TODO Investigate why this passes locally but fail on CI")
     @Test
     fun app_opensArticle() {
         composeTestRule.onAllNodes(hasSubstring("Manuel Vivo"))[0].performClick()
