@@ -17,6 +17,7 @@
 package com.example.owl.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -41,7 +42,7 @@ object MainDestinations {
 }
 
 @Composable
-fun NavGraph(startDestination: String = MainDestinations.ONBOARDING_ROUTE) {
+fun NavGraph(startDestination: String = MainDestinations.COURSES_ROUTE) {
     val navController = rememberNavController()
 
     val actions = remember(navController) { MainActions(navController) }
@@ -49,6 +50,7 @@ fun NavGraph(startDestination: String = MainDestinations.ONBOARDING_ROUTE) {
         navController = navController,
         startDestination = startDestination
     ) {
+
         composable(MainDestinations.ONBOARDING_ROUTE) {
             Onboarding(onboardingComplete = actions.onboardingComplete)
         }
