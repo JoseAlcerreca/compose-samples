@@ -16,29 +16,13 @@
 
 package com.example.owl.ui.courses
 
-import android.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navArgument
-import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
 import com.example.owl.model.courses
 import com.example.owl.model.topics
-import com.example.owl.ui.MainDestinations.COURSE_DETAIL_ID_KEY
-
-/**
- * Destinations used in the ([OwlApp]).
- */
-object CoursesDestinations {
-    const val FEATURED_ROUTE = "courses/featured"
-    const val MY_COURSES_ROUTE = "courses/my"
-    const val SEARCH_COURSES_ROUTE = "courses/search"
-}
 
 @Composable
 fun CoursesNavGraph(
@@ -46,18 +30,17 @@ fun CoursesNavGraph(
     onCourseSelected: (Long) -> Unit,
     navController: NavHostController
 ) {
-
-    navigation(
+    NavHost(
         navController = navController,
-        startDestination = CoursesDestinations.FEATURED_ROUTE
+        startDestination = CourseTabs.FEATURED.route
     ) {
-        composable(CoursesDestinations.FEATURED_ROUTE) {
+        composable(CourseTabs.FEATURED.route) {
             FeaturedCourses(courses, onCourseSelected, modifier)
         }
-        composable(CoursesDestinations.MY_COURSES_ROUTE) {
+        composable(CourseTabs.MY_COURSES.route) {
             MyCourses(courses, onCourseSelected, modifier)
         }
-        composable(CoursesDestinations.SEARCH_COURSES_ROUTE) {
+        composable(CourseTabs.SEARCH.route) {
             SearchCourses(topics, modifier)
         }
     }

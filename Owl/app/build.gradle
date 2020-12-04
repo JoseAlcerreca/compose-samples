@@ -100,6 +100,7 @@ dependencies {
 
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     androidTestImplementation Libs.junit
     androidTestImplementation Libs.AndroidX.Test.core

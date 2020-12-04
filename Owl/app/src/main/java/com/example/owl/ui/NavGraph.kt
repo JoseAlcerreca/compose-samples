@@ -17,8 +17,11 @@
 package com.example.owl.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,6 +33,7 @@ import com.example.owl.ui.MainDestinations.COURSE_DETAIL_ID_KEY
 import com.example.owl.ui.course.CourseDetails
 import com.example.owl.ui.courses.Courses
 import com.example.owl.ui.onboarding.Onboarding
+import com.example.owl.ui.utils.backHandler
 
 /**
  * Destinations used in the ([OwlApp]).
@@ -42,20 +46,42 @@ object MainDestinations {
 }
 
 @Composable
-fun NavGraph(startDestination: String = MainDestinations.COURSES_ROUTE) {
+fun NavGraph(
+    finishActivity: () -> Unit,
+    startDestination: String = MainDestinations.COURSES_ROUTE,
+    showOnboardingInitially: Boolean = true
+) {
     val navController = rememberNavController()
+
+    // Onboarding could be read from shared preferences.
+    var onboardingComplete by remember { mutableStateOf(!showOnboardingInitially) }
 
     val actions = remember(navController) { MainActions(navController) }
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-
         composable(MainDestinations.ONBOARDING_ROUTE) {
-            Onboarding(onboardingComplete = actions.onboardingComplete)
+            backHandler {
+                finishActivity()
+            }
+
+            Onboarding(
+                onOnboardingComplete = {
+                    // Set the flag so that onboarding is not shown next time.
+                    onboardingComplete = true
+                    actions.onboardingComplete()
+                }
+            )
         }
         composable(MainDestinations.COURSES_ROUTE) {
-            Courses(selectCourse = actions.selectCourse)
+            // Show onboarding if this is
+            LaunchedEffect(onboardingComplete) {
+                if (!onboardingComplete) {
+                    navController.navigate(MainDestinations.ONBOARDING_ROUTE)
+                }
+            }
+            Courses(onCourseSelected = actions.selectCourse)
         }
         composable(
             "${MainDestinations.COURSE_DETAIL_ROUTE}/{$COURSE_DETAIL_ID_KEY}",
@@ -76,7 +102,7 @@ fun NavGraph(startDestination: String = MainDestinations.COURSES_ROUTE) {
  */
 class MainActions(navController: NavHostController) {
     val onboardingComplete: () -> Unit = {
-        navController.navigate(MainDestinations.COURSES_ROUTE)
+        navController.popBackStack(navController.graph.startDestination, false)
     }
     val selectCourse: (Long) -> Unit = { courseId: Long ->
         navController.navigate("${MainDestinations.COURSE_DETAIL_ROUTE}/$courseId")

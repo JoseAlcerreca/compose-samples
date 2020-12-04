@@ -55,9 +55,9 @@ class NavigationTest {
                     ProvideWindowInsets {
                         ProvideTestImageLoader {
                             if (startDestination == null) {
-                                NavGraph()
+                                NavGraph(finishActivity = { })
                             } else {
-                                NavGraph(startDestination)
+                                NavGraph(finishActivity = { }, startDestination, showOnboardingInitially = false)
                             }
                         }
                     }

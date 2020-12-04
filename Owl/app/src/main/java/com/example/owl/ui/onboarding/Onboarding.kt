@@ -77,7 +77,7 @@ import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import kotlin.math.max
 
 @Composable
-fun Onboarding(onboardingComplete: () -> Unit) {
+fun Onboarding(onOnboardingComplete: () -> Unit) {
     YellowTheme {
         Scaffold(
             topBar = { AppBar() },
@@ -85,7 +85,7 @@ fun Onboarding(onboardingComplete: () -> Unit) {
             floatingActionButton = {
                 val fabLabel = stringResource(id = R.string.continue_to_courses)
                 FloatingActionButton(
-                    onClick = onboardingComplete,
+                    onClick = onOnboardingComplete,
                     modifier = Modifier
                         .navigationBarsPadding()
                         .semantics {
@@ -295,7 +295,7 @@ private fun StaggeredGrid(
 @Preview(name = "Onboarding")
 @Composable
 private fun OnboardingPreview() {
-    Onboarding(onboardingComplete = { })
+    Onboarding(onOnboardingComplete = { })
 }
 
 @Preview("Topic Chip")

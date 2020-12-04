@@ -33,8 +33,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.primarySurface
-
-import androidx.navigation.compose.navigate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,19 +40,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.KEY_ROUTE
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.owl.R
 import com.example.owl.ui.theme.BlueTheme
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
-import java.util.*
 
 @Composable
-fun Courses(selectCourse: (Long) -> Unit) {
+fun Courses(onCourseSelected: (Long) -> Unit) {
     BlueTheme {
         val tabs = CourseTabs.values()
         val navController: NavHostController = rememberNavController()
@@ -63,7 +60,7 @@ fun Courses(selectCourse: (Long) -> Unit) {
             bottomBar = {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-                    ?: CoursesDestinations.FEATURED_ROUTE
+                    ?: CourseTabs.FEATURED.route
 
                 BottomNavigation(
                     Modifier.navigationBarsHeight(additional = 56.dp)
@@ -72,12 +69,14 @@ fun Courses(selectCourse: (Long) -> Unit) {
                         BottomNavigationItem(
                             icon = { Icon(vectorResource(tab.icon)) },
                             label = {
-                                Text(stringResource(tab.title).toUpperCase(Locale.getDefault()))
+                                Text(stringResource(tab.title).toUpperCase())
                             },
                             selected = currentRoute == tab.route,
                             onClick = {
                                 navController.popBackStack(navController.graph.startDestination, false)
-                                navController.navigate(tab.route)
+                                if (tab.route != currentRoute) {
+                                    navController.navigate(tab.route)
+                                }
                             },
                             alwaysShowLabels = false,
                             selectedContentColor = MaterialTheme.colors.secondary,
@@ -89,7 +88,7 @@ fun Courses(selectCourse: (Long) -> Unit) {
             }
         ) { innerPadding ->
             val modifier = Modifier.padding(innerPadding)
-            CoursesNavGraph(modifier = modifier, selectCourse, navController)
+            CoursesNavGraph(modifier = modifier, onCourseSelected, navController)
         }
     }
 }
@@ -115,7 +114,7 @@ fun CoursesAppBar() {
     }
 }
 
-private enum class CourseTabs(
+enum class CourseTabs(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
     val route: String
@@ -123,4 +122,13 @@ private enum class CourseTabs(
     MY_COURSES(R.string.my_courses, R.drawable.ic_grain, CoursesDestinations.MY_COURSES_ROUTE),
     FEATURED(R.string.featured, R.drawable.ic_featured, CoursesDestinations.FEATURED_ROUTE),
     SEARCH(R.string.search, R.drawable.ic_search, CoursesDestinations.SEARCH_COURSES_ROUTE)
+}
+
+/**
+ * Destinations used in the ([OwlApp]).
+ */
+private object CoursesDestinations {
+    const val FEATURED_ROUTE = "courses/featured"
+    const val MY_COURSES_ROUTE = "courses/my"
+    const val SEARCH_COURSES_ROUTE = "courses/search"
 }
