@@ -34,27 +34,56 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.onCommit
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.KEY_ROUTE
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import com.example.owl.R
+import com.example.owl.model.courses
+import com.example.owl.model.topics
+import com.example.owl.ui.MainDestinations
 import com.example.owl.ui.theme.BlueTheme
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 
+fun NavGraphBuilder.courses(
+    onCourseSelected: (Long) -> Unit,
+    onboardingComplete: Boolean,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    composable(CourseTabs.FEATURED.route) {
+        onCommit(onboardingComplete) {
+            if (!onboardingComplete) {
+                //TODOnavController.navigate(MainDestinations.ONBOARDING_ROUTE)
+            }
+        }
+        FeaturedCourses(courses, onCourseSelected, modifier)
+    }
+    composable(CourseTabs.MY_COURSES.route) {
+        MyCourses(courses, onCourseSelected, modifier)
+    }
+    composable(CourseTabs.SEARCH.route) {
+        SearchCourses(topics, modifier)
+    }
+}
+
 @Composable
-fun Courses(onCourseSelected: (Long) -> Unit) {
+fun ACourses(onCourseSelected: (Long) -> Unit, navController: NavHostController) {
     BlueTheme {
         val tabs = CourseTabs.values()
-        val navController: NavHostController = rememberNavController()
+//        val navController: NavHostController = rememberNavController()
         Scaffold(
             backgroundColor = MaterialTheme.colors.primarySurface,
             bottomBar = {
