@@ -66,7 +66,7 @@ fun NavGraphBuilder.courses(
     composable(CourseTabs.FEATURED.route) {
         onCommit(onboardingComplete) {
             if (!onboardingComplete) {
-                //TODOnavController.navigate(MainDestinations.ONBOARDING_ROUTE)
+                //TODO - crashes // navController.navigate(MainDestinations.ONBOARDING_ROUTE)
             }
         }
         FeaturedCourses(courses, onCourseSelected, modifier)
@@ -76,49 +76,6 @@ fun NavGraphBuilder.courses(
     }
     composable(CourseTabs.SEARCH.route) {
         SearchCourses(topics, modifier)
-    }
-}
-
-@Composable
-fun ACourses(onCourseSelected: (Long) -> Unit, navController: NavHostController) {
-    BlueTheme {
-        val tabs = CourseTabs.values()
-//        val navController: NavHostController = rememberNavController()
-        Scaffold(
-            backgroundColor = MaterialTheme.colors.primarySurface,
-            bottomBar = {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
-                    ?: CourseTabs.FEATURED.route
-
-                BottomNavigation(
-                    Modifier.navigationBarsHeight(additional = 56.dp)
-                ) {
-                    tabs.forEach { tab ->
-                        BottomNavigationItem(
-                            icon = { Icon(vectorResource(tab.icon)) },
-                            label = {
-                                Text(stringResource(tab.title).toUpperCase())
-                            },
-                            selected = currentRoute == tab.route,
-                            onClick = {
-                                navController.popBackStack(navController.graph.startDestination, false)
-                                if (tab.route != currentRoute) {
-                                    navController.navigate(tab.route)
-                                }
-                            },
-                            alwaysShowLabels = false,
-                            selectedContentColor = MaterialTheme.colors.secondary,
-                            unselectedContentColor = AmbientContentColor.current,
-                            modifier = Modifier.navigationBarsPadding()
-                        )
-                    }
-                }
-            }
-        ) { innerPadding ->
-            val modifier = Modifier.padding(innerPadding)
-            CoursesNavGraph(modifier = modifier, onCourseSelected, navController)
-        }
     }
 }
 

@@ -177,9 +177,8 @@ fun OwlScaffold(
     }
 }
 
-
 @Composable
-fun AppTheme(backStackEntry: NavBackStackEntry?, content: @Composable () -> Unit ) {
+fun AppTheme(backStackEntry: NavBackStackEntry?, content: @Composable () -> Unit) {
     if (backStackEntry?.arguments?.getString(KEY_ROUTE) == MainDestinations.ONBOARDING_ROUTE) {
         YellowTheme {
             content()
