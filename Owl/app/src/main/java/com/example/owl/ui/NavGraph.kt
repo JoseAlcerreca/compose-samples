@@ -28,6 +28,7 @@ import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -114,7 +115,9 @@ fun NavGraph(
                 }
                 composable(
                     "${MainDestinations.COURSE_DETAIL_ROUTE}/{$COURSE_DETAIL_ID_KEY}",
-                    arguments = listOf(navArgument(COURSE_DETAIL_ID_KEY) { type = NavType.LongType })
+                    arguments = listOf(
+                        navArgument(COURSE_DETAIL_ID_KEY) { type = NavType.LongType }
+                    )
                 ) { backStackEntry ->
                     val arguments = requireNotNull(backStackEntry.arguments)
                     CourseDetails(
