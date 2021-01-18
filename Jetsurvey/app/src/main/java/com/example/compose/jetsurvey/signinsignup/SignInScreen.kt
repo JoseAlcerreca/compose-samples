@@ -38,12 +38,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.ExperimentalFocus
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import com.example.compose.jetsurvey.R
 import com.example.compose.jetsurvey.theme.JetsurveyTheme
 import com.example.compose.jetsurvey.theme.snackbarAction
@@ -112,7 +111,6 @@ fun SignIn(onNavigationEvent: (SignInEvent) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun SignInContent(
     onSignInSubmitted: (email: String, password: String) -> Unit,
@@ -134,7 +132,9 @@ fun SignInContent(
         Spacer(modifier = Modifier.preferredHeight(16.dp))
         Button(
             onClick = { onSignInSubmitted(emailState.text, passwordState.text) },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
             enabled = emailState.isValid && passwordState.isValid
         ) {
             Text(

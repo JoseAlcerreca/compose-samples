@@ -62,6 +62,8 @@ import com.example.compose.jetchat.components.JetchatAppBar
 import com.example.compose.jetchat.components.baselineHeight
 import com.example.compose.jetchat.data.meProfile
 import com.example.compose.jetchat.theme.JetchatTheme
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @Composable
 fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: () -> Unit = { }) {
@@ -70,7 +72,8 @@ fun ProfileScreen(userData: ProfileScreenState, onNavIconPressed: () -> Unit = {
 
     Column(modifier = Modifier.fillMaxSize()) {
         JetchatAppBar(
-            modifier = Modifier.fillMaxWidth(),
+            // Use statusBarsPadding() to move the app bar content below the status bar
+            modifier = Modifier.fillMaxWidth().statusBarsPadding(),
             onNavIconPressed = onNavIconPressed,
             title = { },
             actions = {
@@ -224,11 +227,13 @@ fun ProfileError() {
 
 @Composable
 fun ProfileFab(extended: Boolean, userIsMe: Boolean, modifier: Modifier = Modifier) {
+
     key(userIsMe) { // Prevent multiple invocations to execute during composition
         FloatingActionButton(
             onClick = { /* TODO */ },
             modifier = modifier
                 .padding(16.dp)
+                .navigationBarsPadding()
                 .preferredHeight(48.dp)
                 .widthIn(min = 48.dp),
             backgroundColor = MaterialTheme.colors.primary,

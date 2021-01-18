@@ -29,12 +29,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.Button
-import androidx.compose.material.ButtonConstants
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.runtime.setValue
 import androidx.compose.samples.crane.base.CraneScaffold
@@ -48,9 +49,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.MapView
 import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.MarkerOptions
+import com.google.maps.android.ktx.addMarker
+import com.google.maps.android.ktx.awaitMap
 import dagger.hilt.android.AndroidEntryPoint
-import java.lang.IllegalStateException
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val KEY_ARG_DETAILS_CITY_NAME = "KEY_ARG_DETAILS_CITY_NAME"
@@ -148,6 +150,7 @@ private fun MapViewContainer(
     longitude: String
 ) {
     var zoom by savedInstanceState { InitialZoom }
+    val coroutineScope = rememberCoroutineScope()
 
     ZoomControls(zoom) {
         zoom = it.coerceIn(MinZoom, MaxZoom)
@@ -156,13 +159,14 @@ private fun MapViewContainer(
         // Reading zoom so that AndroidView recomposes when it changes. The getMapAsync lambda
         // is stored for later, Compose doesn't recognize state reads
         val mapZoom = zoom
-        mapView.getMapAsync {
-            it.setZoom(mapZoom)
+        coroutineScope.launch {
+            val googleMap = mapView.awaitMap()
+            googleMap.setZoom(mapZoom)
             val position = LatLng(latitude.toDouble(), longitude.toDouble())
-            it.addMarker(
-                MarkerOptions().position(position)
-            )
-            it.moveCamera(CameraUpdateFactory.newLatLng(position))
+            googleMap.addMarker {
+                position(position)
+            }
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(position))
         }
     }
 }
@@ -182,7 +186,7 @@ private fun ZoomControls(
 private fun ZoomButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier.padding(8.dp),
-        colors = ButtonConstants.defaultButtonColors(
+        colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.onPrimary,
             contentColor = MaterialTheme.colors.primary
         ),

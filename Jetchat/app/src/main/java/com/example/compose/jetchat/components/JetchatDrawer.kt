@@ -52,9 +52,13 @@ import com.example.compose.jetchat.R
 import com.example.compose.jetchat.data.colleagueProfile
 import com.example.compose.jetchat.data.meProfile
 import com.example.compose.jetchat.theme.JetchatTheme
+import dev.chrisbanes.accompanist.insets.statusBarsHeight
 
 @Composable
 fun ColumnScope.JetchatDrawer(onProfileClicked: (String) -> Unit, onChatClicked: (String) -> Unit) {
+    // Use statusBarsHeight() to add a spacer which pushes the drawer content
+    // below the status bar (y-axis)
+    Spacer(Modifier.statusBarsHeight())
     DrawerHeader()
     Divider()
     DrawerItemHeader("Chats")
@@ -62,7 +66,9 @@ fun ColumnScope.JetchatDrawer(onProfileClicked: (String) -> Unit, onChatClicked:
     ChatItem("droidcon-nyc", false) { onChatClicked("droidcon-nyc") }
     DrawerItemHeader("Recent Profiles")
     ProfileItem("Ali Conors (you)", meProfile.photo) { onProfileClicked(meProfile.userId) }
-    ProfileItem("Taylor Brooks", colleagueProfile.photo) { onProfileClicked(colleagueProfile.userId) }
+    ProfileItem("Taylor Brooks", colleagueProfile.photo) {
+        onProfileClicked(colleagueProfile.userId)
+    }
 }
 
 @Composable
@@ -102,11 +108,14 @@ private fun ChatItem(text: String, selected: Boolean, onChatClicked: () -> Unit)
             .clickable(onClick = onChatClicked),
         verticalAlignment = CenterVertically
     ) {
-        val mediumEmphasisOnSurface =
+        val iconTint = if (selected) {
+            MaterialTheme.colors.primary
+        } else {
             MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium)
+        }
         Icon(
             vectorResource(id = R.drawable.ic_jetchat),
-            tint = if (selected) MaterialTheme.colors.primary else mediumEmphasisOnSurface,
+            tint = iconTint,
             modifier = Modifier.padding(8.dp)
         )
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {

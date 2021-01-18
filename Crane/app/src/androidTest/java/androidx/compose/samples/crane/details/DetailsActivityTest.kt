@@ -41,6 +41,8 @@ import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
+import kotlin.math.pow
+import kotlin.math.round
 
 @UninstallModules(DispatchersModule::class)
 @HiltAndroidTest
@@ -58,12 +60,21 @@ class DetailsActivityTest {
 
     @get:Rule(order = 1)
     val composeTestRule = AndroidComposeTestRule(
-        ActivityScenarioRule<DetailsActivity>(
+        activityRule = ActivityScenarioRule<DetailsActivity>(
             createDetailsActivityIntent(
                 InstrumentationRegistry.getInstrumentation().targetContext,
                 testExploreModel
             )
-        )
+        ),
+        // Needed for now, discussed in https://issuetracker.google.com/issues/174472899
+        activityProvider = { rule ->
+            var activity: DetailsActivity? = null
+            rule.scenario.onActivity { activity = it }
+            if (activity == null) {
+                throw IllegalStateException("Activity was not set in the ActivityScenarioRule!")
+            }
+            activity!!
+        }
     )
 
     @Before
@@ -109,4 +120,5 @@ class DetailsActivityTest {
     }
 }
 
-private fun Double.round(decimals: Int = 2): Double = "%.${decimals}f".format(this).toDouble()
+private fun Double.round(decimals: Int = 2): Double =
+    round(this * 10f.pow(decimals)) / 10f.pow(decimals)

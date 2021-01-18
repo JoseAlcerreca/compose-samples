@@ -44,7 +44,7 @@ import androidx.compose.runtime.Providers
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.annotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -111,7 +111,9 @@ fun SurveyResultScreen(
             bottomBar = {
                 OutlinedButton(
                     onClick = { onDonePressed() },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 24.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 24.dp)
                 ) {
                     Text(text = stringResource(id = R.string.done))
                 }
@@ -155,7 +157,7 @@ private fun TopAppBarTitle(
         fontWeight = FontWeight.Bold
     )
     val totalStyle = MaterialTheme.typography.caption.toSpanStyle()
-    val text = annotatedString {
+    val text = buildAnnotatedString {
         withStyle(style = indexStyle) {
             append("${questionIndex + 1}")
         }
@@ -182,17 +184,17 @@ private fun SurveyTopAppBar(
         TopAppBarTitle(
             questionIndex = questionIndex,
             totalQuestionsCount = totalQuestionsCount,
-            modifier = Modifier.padding(vertical = 20.dp).constrainAs(text) {
-                centerHorizontallyTo(parent)
-            }
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .constrainAs(text) { centerHorizontallyTo(parent) }
         )
 
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             IconButton(
                 onClick = onBackPressed,
-                modifier = Modifier.padding(horizontal = 12.dp).constrainAs(button) {
-                    end.linkTo(parent.end)
-                }
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .constrainAs(button) { end.linkTo(parent.end) }
             ) {
                 Icon(Icons.Filled.Close)
             }
@@ -200,9 +202,12 @@ private fun SurveyTopAppBar(
 
         LinearProgressIndicator(
             progress = (questionIndex + 1) / totalQuestionsCount.toFloat(),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).constrainAs(progress) {
-                bottom.linkTo(text.bottom)
-            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .constrainAs(progress) {
+                    bottom.linkTo(text.bottom)
+                },
             backgroundColor = MaterialTheme.colors.progressIndicatorBackground
         )
     }

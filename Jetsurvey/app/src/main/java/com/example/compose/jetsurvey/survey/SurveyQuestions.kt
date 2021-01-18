@@ -37,13 +37,13 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxConstants
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonConstants
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -60,8 +60,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import com.example.compose.jetsurvey.R
 import com.example.compose.jetsurvey.theme.JetsurveyTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -85,15 +85,19 @@ fun Question(
             MaterialTheme.colors.onSurface.copy(alpha = 0.06f)
         }
         Row(
-            modifier = Modifier.fillMaxWidth().background(
-                color = backgroundColor,
-                shape = MaterialTheme.shapes.small
-            )
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = backgroundColor,
+                    shape = MaterialTheme.shapes.small
+                )
         ) {
             Text(
                 text = stringResource(id = question.questionText),
                 style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp, horizontal = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp, horizontal = 16.dp)
             )
         }
         Spacer(modifier = Modifier.preferredHeight(24.dp))
@@ -199,7 +203,7 @@ private fun SingleChoiceQuestion(
                     RadioButton(
                         selected = optionSelected,
                         onClick = onClickHandle,
-                        colors = RadioButtonConstants.defaultColors(
+                        colors = RadioButtonDefaults.colors(
                             selectedColor = MaterialTheme.colors.primary
                         )
                     )
@@ -252,7 +256,7 @@ private fun MultipleChoiceQuestion(
                             checkedState = selected
                             onAnswerSelected(option.value, selected)
                         },
-                        colors = CheckboxConstants.defaultColors(
+                        colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colors.primary
                         ),
                     )
@@ -368,8 +372,8 @@ private fun DateQuestion(
 
 @Composable
 private fun PhotoDefaultImage(
-    lightTheme: Boolean = MaterialTheme.colors.isLight,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    lightTheme: Boolean = MaterialTheme.colors.isLight
 ) {
     val assetId = if (lightTheme) {
         R.drawable.ic_selfie_light
@@ -377,7 +381,7 @@ private fun PhotoDefaultImage(
         R.drawable.ic_selfie_dark
     }
     Image(
-        asset = vectorResource(id = assetId),
+        imageVector = vectorResource(id = assetId),
         modifier = modifier
     )
 }
@@ -405,7 +409,9 @@ private fun SliderQuestion(
             },
             valueRange = possibleAnswer.range,
             steps = possibleAnswer.steps,
-            modifier = Modifier.weight(1f).padding(horizontal = 16.dp)
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp)
         )
         Text(
             text = stringResource(id = possibleAnswer.endText),

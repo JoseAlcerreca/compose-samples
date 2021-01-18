@@ -16,7 +16,7 @@
 
 package com.example.compose.rally.ui.components
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.animateAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -31,12 +31,14 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.RippleIndication
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.rally.RallyScreen
 
@@ -46,7 +48,11 @@ fun RallyTopAppBar(
     onTabSelected: (RallyScreen) -> Unit,
     currentScreen: RallyScreen
 ) {
-    Surface(Modifier.preferredHeight(TabHeight).fillMaxWidth()) {
+    Surface(
+        Modifier
+            .preferredHeight(TabHeight)
+            .fillMaxWidth()
+    ) {
         Row {
             allScreens.forEach { screen ->
                 RallyTab(
@@ -63,7 +69,7 @@ fun RallyTopAppBar(
 @Composable
 private fun RallyTab(
     text: String,
-    icon: VectorAsset,
+    icon: ImageVector,
     onSelected: () -> Unit,
     selected: Boolean
 ) {
@@ -76,9 +82,9 @@ private fun RallyTab(
             delayMillis = TabFadeInAnimationDelay
         )
     }
-    val tabTintColor = animate(
-        target = if (selected) color else color.copy(alpha = InactiveTabOpacity),
-        animSpec = animSpec
+    val tabTintColor by animateAsState(
+        targetValue = if (selected) color else color.copy(alpha = InactiveTabOpacity),
+        animationSpec = animSpec
     )
     Row(
         modifier = Modifier
@@ -88,10 +94,14 @@ private fun RallyTab(
             .selectable(
                 selected = selected,
                 onClick = onSelected,
-                indication = RippleIndication(bounded = false)
+                indication = rememberRipple(
+                    bounded = false,
+                    radius = Dp.Unspecified,
+                    color = Color.Unspecified
+                )
             )
     ) {
-        Icon(asset = icon, tint = tabTintColor)
+        Icon(imageVector = icon, tint = tabTintColor)
         if (selected) {
             Spacer(Modifier.preferredWidth(12.dp))
             Text(text, color = tabTintColor)

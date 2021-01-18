@@ -41,8 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 
 @Composable
 fun SimpleUserInput(
@@ -117,14 +117,14 @@ private fun CraneBaseUserInput(
     showCaption: () -> Boolean = { true },
     tintIcon: () -> Boolean,
     tint: Color = AmbientContentColor.current,
-    children: @Composable () -> Unit
+    content: @Composable () -> Unit
 ) {
     Surface(modifier = modifier, color = MaterialTheme.colors.primaryVariant) {
         Row(Modifier.padding(all = 12.dp)) {
             if (vectorImageId != null) {
                 Icon(
                     modifier = Modifier.preferredSize(24.dp, 24.dp),
-                    asset = vectorResource(id = vectorImageId),
+                    imageVector = vectorResource(id = vectorImageId),
                     tint = if (tintIcon()) tint else Color(0x80FFFFFF)
                 )
                 Spacer(Modifier.preferredWidth(8.dp))
@@ -138,7 +138,7 @@ private fun CraneBaseUserInput(
                 Spacer(Modifier.preferredWidth(8.dp))
             }
             Row(Modifier.weight(1f).align(Alignment.CenterVertically)) {
-                children()
+                content()
             }
         }
     }
@@ -146,7 +146,7 @@ private fun CraneBaseUserInput(
 
 @Preview
 @Composable
-fun previewInput() {
+fun PreviewInput() {
     CraneScaffold {
         CraneBaseUserInput(
             tintIcon = { true },

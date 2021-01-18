@@ -16,7 +16,7 @@
 
 package com.example.owl.ui.course
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
@@ -32,7 +32,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
@@ -57,6 +57,7 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -298,23 +299,24 @@ private fun RelatedCourses(
                             vertical = 24.dp
                         )
                 )
-                LazyRowFor(
-                    items = relatedCourses,
+                LazyRow(
                     contentPadding = PaddingValues(
                         start = 16.dp,
                         bottom = 32.dp,
                         end = FabSize + 8.dp
                     )
-                ) { related ->
-                    CourseListItem(
-                        course = related,
-                        onClick = { selectCourse(related.id) },
-                        titleStyle = MaterialTheme.typography.body2,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .preferredSize(288.dp, 80.dp),
-                        iconSize = 14.dp
-                    )
+                ) {
+                    items(relatedCourses) { related ->
+                        CourseListItem(
+                            course = related,
+                            onClick = { selectCourse(related.id) },
+                            titleStyle = MaterialTheme.typography.body2,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .preferredSize(288.dp, 80.dp),
+                            iconSize = 14.dp
+                        )
+                    }
                 }
             }
         }
@@ -374,7 +376,7 @@ private fun Lessons(
                 .statusBarsPadding()
         ) {
             val scroll = rememberScrollState()
-            val appBarElevation = animate(if (scroll.value > 0f) 4.dp else 0.dp)
+            val appBarElevation by animateAsState(if (scroll.value > 0f) 4.dp else 0.dp)
             val appBarColor = if (appBarElevation > 0.dp) surfaceColor else Color.Transparent
             TopAppBar(
                 backgroundColor = appBarColor,

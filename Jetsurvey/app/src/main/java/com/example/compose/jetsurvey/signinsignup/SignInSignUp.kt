@@ -49,16 +49,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.ExperimentalFocus
 import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focusObserver
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import com.example.compose.jetsurvey.R
 
 @Composable
@@ -106,7 +105,6 @@ fun SignInSignUpTopAppBar(topAppBarText: String, onBackPressed: () -> Unit) {
     )
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun Email(
     emailState: TextFieldState = remember { EmailState() },
@@ -126,7 +124,7 @@ fun Email(
                 )
             }
         },
-        modifier = Modifier.fillMaxWidth().focusObserver { focusState ->
+        modifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
             val focused = focusState == FocusState.Active
             emailState.onFocusChange(focused)
             if (!focused) {
@@ -147,7 +145,6 @@ fun Email(
     emailState.getError()?.let { error -> TextFieldError(textError = error) }
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun Password(
     label: String,
@@ -163,7 +160,7 @@ fun Password(
             passwordState.text = it
             passwordState.enableShowErrors()
         },
-        modifier = modifier.fillMaxWidth().focusObserver { focusState ->
+        modifier = modifier.fillMaxWidth().onFocusChanged { focusState ->
             val focused = focusState == FocusState.Active
             passwordState.onFocusChange(focused)
             if (!focused) {
@@ -182,11 +179,11 @@ fun Password(
         trailingIcon = {
             if (showPassword.value) {
                 IconButton(onClick = { showPassword.value = false }) {
-                    Icon(asset = Icons.Filled.Visibility)
+                    Icon(imageVector = Icons.Filled.Visibility)
                 }
             } else {
                 IconButton(onClick = { showPassword.value = true }) {
-                    Icon(asset = Icons.Filled.VisibilityOff)
+                    Icon(imageVector = Icons.Filled.VisibilityOff)
                 }
             }
         },

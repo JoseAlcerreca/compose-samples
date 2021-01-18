@@ -24,10 +24,10 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasLabel
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithLabel
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -37,6 +37,8 @@ import com.example.compose.jetchat.conversation.ConversationContent
 import com.example.compose.jetchat.conversation.KeyboardShownKey
 import com.example.compose.jetchat.data.exampleUiState
 import com.example.compose.jetchat.theme.JetchatTheme
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.WindowInsets
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -57,9 +59,15 @@ class UserInputTest {
     fun setUp() {
         composeTestRule.activityRule.scenario.onActivity { newActivity ->
             activity = newActivity
+            // Provide empty insets. We can modify this value as necessary
+            val windowInsets = WindowInsets()
+
             // Launch the conversation screen
             composeTestRule.setContent {
-                Providers(AmbientBackPressedDispatcher provides activity) {
+                Providers(
+                    AmbientBackPressedDispatcher provides activity.onBackPressedDispatcher,
+                    AmbientWindowInsets provides windowInsets,
+                ) {
                     JetchatTheme {
                         ConversationContent(
                             uiState = exampleUiState,
@@ -103,7 +111,8 @@ class UserInputTest {
         // Click on text field to open the soft keyboard
         clickOnTextField()
 
-        // TODO: Soft keyboard is not correctly synchronized https://issuetracker.google.com/169235317
+        // TODO: Soft keyboard is not correctly synchronized
+        //  https://issuetracker.google.com/169235317
         Thread.sleep(200)
 
         composeTestRule.onNode(SemanticsMatcher.expectValue(KeyboardShownKey, true)).assertExists()
@@ -129,19 +138,23 @@ class UserInputTest {
     }
 
     private fun clickOnTextField() =
-        composeTestRule.onNodeWithLabel(activity.getString(R.string.textfield_desc))
+        composeTestRule
+            .onNodeWithContentDescription(activity.getString(R.string.textfield_desc))
             .performClick()
 
     private fun openEmojiSelector() =
-        composeTestRule.onNodeWithLabel(activity.getString(R.string.emoji_selector_bt_desc))
+        composeTestRule
+            .onNodeWithContentDescription(activity.getString(R.string.emoji_selector_bt_desc))
             .performClick()
 
     private fun assertEmojiSelectorIsDisplayed() =
-        composeTestRule.onNodeWithLabel(activity.getString(R.string.emoji_selector_desc))
+        composeTestRule
+            .onNodeWithContentDescription(activity.getString(R.string.emoji_selector_desc))
             .assertIsDisplayed()
 
     private fun assertEmojiSelectorDoesNotExist() =
-        composeTestRule.onNodeWithLabel(activity.getString(R.string.emoji_selector_desc))
+        composeTestRule
+            .onNodeWithContentDescription(activity.getString(R.string.emoji_selector_desc))
             .assertDoesNotExist()
 
     private fun findSendButton() = composeTestRule.onNodeWithText(activity.getString(R.string.send))
@@ -149,7 +162,7 @@ class UserInputTest {
     private fun findTextInputField(): SemanticsNodeInteraction {
         return composeTestRule.onNode(
             hasSetTextAction() and
-                hasAnyAncestor(hasLabel(activity.getString(R.string.textfield_desc)))
+                hasAnyAncestor(hasContentDescription(activity.getString(R.string.textfield_desc)))
         )
     }
 }

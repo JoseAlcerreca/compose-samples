@@ -29,6 +29,8 @@ import com.example.compose.jetchat.conversation.AmbientBackPressedDispatcher
 import com.example.compose.jetchat.conversation.ConversationContent
 import com.example.compose.jetchat.data.exampleUiState
 import com.example.compose.jetchat.theme.JetchatTheme
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.WindowInsets
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -57,9 +59,15 @@ class NavigationTest {
             navController = Navigation.findNavController(navHostFragment)
         }
 
+        // Provide empty insets. We can modify this value as necessary
+        val windowInsets = WindowInsets()
+
         // Start the app
         composeTestRule.setContent {
-            Providers(AmbientBackPressedDispatcher provides activity) {
+            Providers(
+                AmbientBackPressedDispatcher provides activity.onBackPressedDispatcher,
+                AmbientWindowInsets provides windowInsets,
+            ) {
                 JetchatTheme {
                     ConversationContent(
                         uiState = exampleUiState,
@@ -86,7 +94,9 @@ class NavigationTest {
         // Check profile is displayed
         assertEquals(navController.currentDestination?.id, R.id.nav_profile)
         // Extra UI check
-        composeTestRule.onNodeWithText(activity.getString(R.string.textfield_hint)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText(activity.getString(R.string.textfield_hint))
+            .assertIsDisplayed()
 
         // Press back
         Espresso.pressBack()
